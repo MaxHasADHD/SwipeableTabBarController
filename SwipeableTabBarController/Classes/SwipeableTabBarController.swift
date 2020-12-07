@@ -14,6 +14,9 @@ import UIKit
 @objc(SwipeableTabBarController)
 open class SwipeableTabBarController: UITabBarController {
 
+    /// Completion handler called when the user swipes between tab pages.
+    public var swipeCompletionHandler: ((Bool) -> Void)?
+
     /// Animated transition to be performed while swiping
     public var swipeAnimatedTransitioning: SwipeTransitioningProtocol? = SwipeTransitionAnimator()
     
@@ -174,7 +177,7 @@ extension SwipeableTabBarController: UITabBarControllerDelegate {
 
     open func tabBarController(_ tabBarController: UITabBarController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         if panGestureRecognizer.state == .began || panGestureRecognizer.state == .changed {
-            return SwipeInteractor(gestureRecognizer: panGestureRecognizer, edge: currentAnimatedTransitioningType?.targetEdge ?? .right)
+            return SwipeInteractor(gestureRecognizer: panGestureRecognizer, edge: currentAnimatedTransitioningType?.targetEdge ?? .right, completionHandler: swipeCompletionHandler)
         } else {
             return nil
         }
