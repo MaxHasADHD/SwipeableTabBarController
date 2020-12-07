@@ -13,6 +13,7 @@ import UIKit
 class SwipeInteractor: UIPercentDrivenInteractiveTransition {
     
     // MARK: - Private
+    public var completionHandler: ((Bool) -> Void)?
     private weak var transitionContext: UIViewControllerContextTransitioning?
     private var gestureRecognizer: UIPanGestureRecognizer
     private var edge: UIRectEdge
@@ -22,9 +23,10 @@ class SwipeInteractor: UIPercentDrivenInteractiveTransition {
     private let xVelocityForComplete: CGFloat = 200.0
     private let xVelocityForCancel: CGFloat = 30.0
     
-    init(gestureRecognizer: UIPanGestureRecognizer, edge: UIRectEdge) {
+    init(gestureRecognizer: UIPanGestureRecognizer, edge: UIRectEdge, completionHandler: ((Bool) -> Void)?) {
         self.gestureRecognizer = gestureRecognizer
         self.edge = edge
+        self.completionHandler = completionHandler
         super.init()
         
         // Add self as an observer of the gesture recognizer so that this
@@ -102,11 +104,14 @@ class SwipeInteractor: UIPercentDrivenInteractiveTransition {
             }
 
             if shouldComplete {
+                completionHandler?(true)
                 finish()
             } else {
+                completionHandler?(false)
                 cancel()
             }
         default:
+            completionHandler?(false)
             cancel()
         }
     }
